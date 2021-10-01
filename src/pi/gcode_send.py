@@ -2,8 +2,8 @@ import serial
 import time
 import os
 
-ser = serial.Serial('/dev/ttyUSB0', 115200)
 """
+ser = serial.Serial('/dev/ttyUSB0', 115200)
 time.sleep(2)
 ser.write(str.encode("G28 x0 y0\n")) # Send to home
 print("read:")
@@ -34,18 +34,25 @@ ser.close()
 """
 
 class GcodeController:
-	def __init__(self):
-		self.ser = serial.Serial('/dev/ttyUSB0', 115200)
-		self.readline()
-		self.readline()
+	def __init__(self, device='/dev/ttyUSB0', in_lines=1):
+		self.ser = serial.Serial(device, 115200)
+		for i in range(in_lines):
+			self.readline()
+			
+		self.send_to_home()
+		self.send_use_absolute_coordinates()
 		return
+		
 	def readline(self, debug="on"):
 		return_value = self.ser.readline().strip()
 		# if debug:
 		# 	print(return_value)
 		return return_value.decode()
 	def __del__(self):
-		self.ser.close()
+		try:
+			self.ser.close()
+		except:
+			pass
 		
 	def send_command(self, command, debug="on"):
 		self.ser.write(str.encode(command + "\n"))
