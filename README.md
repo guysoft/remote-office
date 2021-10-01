@@ -4,6 +4,10 @@ Install on a raspberrypi requirements:
 
     sudo pip3 install -r requirements.txt 
 
+Install the keylogger script:
+
+    src/pi/install_app.sh
+
 
 
 
