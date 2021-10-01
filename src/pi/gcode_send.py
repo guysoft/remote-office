@@ -1,6 +1,6 @@
 import serial
 import time
-
+import os
 
 ser = serial.Serial('/dev/ttyUSB0', 115200)
 """
@@ -69,6 +69,15 @@ class GcodeController:
 
 
 if __name__ == "__main__":
+	# Find which usb devices are by running:
+	# ls /dev/serial/by-id/*
+	
+	mouse_stepper_path = "/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0"
+	mouse_stepper_path = os.path.realpath(mouse_stepper_path)
+	
+	keyboard_stepper_path = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A602AAJR-if00-port0"
+	keyboard_stepper_path = os.path.realpath(keyboard_stepper_path)
+	
 	a = GcodeController()
 	a.send_to_home()
 	a.send_use_absolute_coordinates()
