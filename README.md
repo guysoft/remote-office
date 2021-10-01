@@ -1,3 +1,7 @@
 # remote-office
 
-Fill me with your lovely installation and usage instructions
+Install on a raspberrypi requirements:
+
+    sudo pip3 install -r requirements.txt 
+
+
