@@ -28,7 +28,6 @@ if os.environ.get('pylogger_clean', None) is not None:
 	except EnvironmentError:
 	# File does not exist, or no permissions.
 		pass
-		
 
 
 mouse_stepper_path = "/dev/serial/by-id/usb-1a86_USB2.0-Serial-if00-port0"
@@ -40,14 +39,14 @@ keyboard_stepper_path = os.path.realpath(keyboard_stepper_path)
 key_gcode = None
 
 try:
-	key_gcode = GcodeController(keyboard_stepper_path, in_lines=1)
+	key_gcode = GcodeController(keyboard_stepper_path)
 except Exception as e:
 	print(e)
 	print("can't connect to keyboard robot, passing")
 
 mouse_gcode = None
 try:
-	mouse_gcode = GcodeController(mouse_stepper_path, in_lines=2)
+	mouse_gcode = GcodeController(mouse_stepper_path)
 except Exception as e:
 	print(e)
 	print("can't connect to mouse robot, passing")

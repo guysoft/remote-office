@@ -32,21 +32,37 @@ print(ser.readline())
 time.sleep(1)
 ser.close()
 """
-
+            
 class GcodeController:
-	def __init__(self, device='/dev/ttyUSB0', in_lines=1):
-		self.ser = serial.Serial(device, 115200)
-		for i in range(in_lines):
-			self.readline()
-			
+	def __init__(self, device='/dev/ttyUSB0'):
+		self.ser = serial.Serial(device, baudrate=115200, timeout=2)
+		time.sleep(1)
+		print(self.read_lines())
+		
+
+		
 		self.send_to_home()
 		self.send_use_absolute_coordinates()
 		return
 		
+	def read_lines(self):
+		lines = []
+		while True:
+			line = self.ser.readline()
+			lines.append(line.decode('utf-8').rstrip())
+
+			# wait for new data after each line
+			timeout = time.time() + 0.1
+			while not self.ser.inWaiting() and timeout > time.time():
+				pass
+			if not self.ser.inWaiting():
+				break
+		return lines
+		
 	def readline(self, debug="on"):
 		return_value = self.ser.readline().strip()
-		# if debug:
-		# 	print(return_value)
+		if debug:
+			print(return_value)
 		return return_value.decode()
 	def __del__(self):
 		try:
@@ -56,14 +72,27 @@ class GcodeController:
 		
 	def send_command(self, command, debug="on"):
 		self.ser.write(str.encode(command + "\n"))
+		time.sleep(2)
+		return_value = self.read_lines()
+		print(return_value)
+		"""
 		return_value = self.readline(debug="off")
 		if debug:
 			print(return_value)
+		"""
 		return return_value
 		
 	def send_to_home(self):
 		print("send home")
 		return self.send_command("G28 x0 y0")
+	
+	def servo(self):
+		print("servo")
+		return self.send_command("M280 P1 S20")
+		
+	# 
+		
+	# TODO: add https://marlinfw.org/docs/gcode/M280.html
 	
 	def send_use_absolute_coordinates(self):
 		print("send use_absolute coordinates")
@@ -85,8 +114,7 @@ if __name__ == "__main__":
 	keyboard_stepper_path = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A602AAJR-if00-port0"
 	keyboard_stepper_path = os.path.realpath(keyboard_stepper_path)
 	
-	a = GcodeController()
-	a.send_to_home()
-	a.send_use_absolute_coordinates()
+	a = GcodeController(keyboard_stepper_path)
 	a.goto_location(50, 50, 700)
+	a.servo()
 	print("Done")
