@@ -73,13 +73,13 @@ class GcodeController:
 	def send_command(self, command, debug="on"):
 		self.ser.write(str.encode(command + "\n"))
 		time.sleep(2)
-		return_value = self.read_lines()
-		print(return_value)
-		"""
+		# return_value = self.read_lines()
+		return
+		
 		return_value = self.readline(debug="off")
 		if debug:
 			print(return_value)
-		"""
+		
 		return return_value
 		
 	def send_to_home(self):
@@ -114,7 +114,7 @@ if __name__ == "__main__":
 	keyboard_stepper_path = "/dev/serial/by-id/usb-FTDI_FT232R_USB_UART_A602AAJR-if00-port0"
 	keyboard_stepper_path = os.path.realpath(keyboard_stepper_path)
 	
-	a = GcodeController(keyboard_stepper_path)
-	a.goto_location(50, 50, 700)
-	a.servo()
+	a = GcodeController(mouse_stepper_path)
+	a.goto_location(5, 5, 700)
+	#  a.servo()
 	print("Done")

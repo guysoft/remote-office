@@ -4,7 +4,10 @@ import os
 import time
 import pyxhook
 from gcode_send import GcodeController
+import random
+import math
 
+import subprocess
 
 # This tells the keylogger where the log file will go.
 # You can set the file path as an environment variable ('pylogger_file'),
@@ -76,23 +79,42 @@ class KeyClass:
 
 ### Callback for mouse move
 class MouseClass:
-	def __init__(self):
+	def __init__(self, x_resolution=1280, y_resolution=1024):
 		self.LAST_MOUSE_MOVE = 0
-		self.MAX_MOUSE_TIME = 0.1
+		self.MAX_MOUSE_TIME = 3
+		self.last_x = None
+		self.last_y = None
+		self.x_resolution = x_resolution
+		self.y_resolution = y_resolution
 		return
 		
 	def MouseMove(self, event):
+		x, y = event.Position
+		if self.last_x is None or self.last_y is None:
+			self.last_x = x
+			self.last_y = y
 		
-		current = time.time()
-		if current - self.LAST_MOUSE_MOVE > self.MAX_MOUSE_TIME:
-			if mouse_gcode is not None:
-				mouse_gcode.goto_location(50, 50, 700)
-				
-				self.LAST_MOUSE_MOVE = current
-		
-		# Debug
-		with open(log_file2, 'a') as f:
-			f.write('{}\n'.format(event))
+		MAX_MOVE = 2
+		STEP_MAX = 30
+		distance = math.sqrt((x - self.last_x)**2 + (y - self.last_y)**2)
+		print(distance)
+		if  distance > MAX_MOVE:
+			current = time.time()
+			if current - self.LAST_MOUSE_MOVE > self.MAX_MOUSE_TIME:
+				if mouse_gcode is not None:
+					# random.randint(0, 30)
+					mouse_gcode.goto_location(
+					x / self.x_resolution * STEP_MAX,
+					y / self.y_resolution * STEP_MAX,
+					2500)
+					
+					self.LAST_MOUSE_MOVE = current
+			
+			# Debug
+			with open(log_file2, 'a') as f:
+				f.write('{}\n'.format(event))
+		self.last_x = x
+		self.last_y = y
 		
 		
 if __name__ == "__main__":
