@@ -1,0 +1,2 @@
+[Desktop Entry]
+Exec=bash -c "python3 /home/pi/workspace/geekcon/remote-office/src/pi/keylogger.py > /home/pi/Desktop/log.log 2>&1"
