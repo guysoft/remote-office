@@ -1,5 +1,7 @@
 # Python code for keylogger
 # to be used in linux
+# based off https://www.geeksforgeeks.org/design-a-keylogger-in-python/
+# They also have a windows version
 import os
 import pyxhook
 
